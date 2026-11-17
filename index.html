@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — ESFM Ángel Mendoza Justiniano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0A261A;
+    --bg-deep-2:#061A11;
+    --card:#FFFFFF;
+    --green:#0F4C2E;
+    --green-hover:#16653E;
+    --green-soft:#E8F2EC;
+    --green-line:#B9D4C4;
+    --ink:#111111;
+    --label:#4A4A4A;
+    --muted:#7B8794;
+    --error:#C62828;
+    --error-soft:#FDECEC;
+    --border-soft:#E6E8E7;
+    --gold:#C6A34F;
+    --gold-light:#E5C77E;
+    --gold-soft:#FDF9EB;
+    --shadow:0 24px 60px -18px rgba(0,0,0,.45);
+    --shadow-sm:0 8px 24px -10px rgba(0,0,0,.3);
+    --radius:18px;
+    --radius-sm:12px;
+  }
+
+  *, *::before, *::after{ box-sizing:border-box; }
+  html, body{ height:100%; }
+
+  body{
+    margin:0;
+    font-family:'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #0F4C2E 0%, transparent 55%),
+      radial-gradient(900px 500px at 110% 10%, #0B3A24 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-deep-2) 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 18px;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .login-card{
+    width:100%;
+    max-width:480px;
+    background:var(--card);
+    border-radius:var(--radius);
+    border-top:6px solid var(--green);
+    box-shadow:var(--shadow);
+    padding:34px 32px 30px;
+    position:relative;
+    overflow:hidden;
+    animation:cardIn .7s cubic-bezier(.22,1,.36,1) both;
+  }
+
+  .login-card::after{
+    content:"";
+    position:absolute;
+    top:0; right:0; left:0;
+    height:6px;
+    background:linear-gradient(90deg, var(--green), var(--gold), var(--green));
+  }
+
+  @keyframes cardIn{
+    from{opacity:0; transform:translateY(26px) scale(.97);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+
+  .login-card.shake{
+    animation:shake .5s cubic-bezier(.36,.07,.19,.97) both;
+  }
+
+  @keyframes shake{
+    10%,90%{transform:translateX(-2px);}
+    20%,80%{transform:translateX(3px);}
+    30%,50%,70%{transform:translateX(-6px);}
+    40%,60%{transform:translateX(6px);}
+  }
+
+  /* Header logo */
+  .logo-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    margin-bottom:22px;
+  }
+
+  .logo-img{
+    width:96px;
+    height:96px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid var(--green);
+    box-shadow:0 10px 24px -8px rgba(15,76,46,.45);
+    background:#fff;
+    animation:logoIn .8s cubic-bezier(.22,1,.36,1) .1s both;
+  }
+
+  @keyframes logoIn{
+    from{opacity:0; transform:scale(.8);}
+    to{opacity:1; transform:scale(1);}
+  }
+
+  .logo-title{
+    margin:14px 0 4px;
+    font-size:1.18rem;
+    font-weight:800;
+    letter-spacing:.06em;
+    color:var(--ink);
+    line-height:1.2;
+  }
+
+  .logo-subtitle{
+    margin:0;
+    font-size:.82rem;
+    font-weight:500;
+    color:var(--label);
+    letter-spacing:.02em;
+  }
+
+  /* Segmented control de rol */
+  .role-switch{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    background:var(--green-soft);
+    padding:6px;
+    border-radius:14px;
+    margin-bottom:22px;
+    border:1px solid var(--green-line);
+  }
+
+  .role-switch button{
+    font-family:inherit;
+    font-size:.86rem;
+    font-weight:800;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--green);
+    background:transparent;
+    border:none;
+    padding:11px 8px;
+    border-radius:10px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:background .25s ease, color .25s ease, box-shadow .25s ease;
+  }
+
+  .role-switch button svg{ width:16px; height:16px; }
+
+  .role-switch button[aria-pressed="true"]{
+    background:var(--green);
+    color:#fff;
+    box-shadow:0 6px 16px -8px rgba(15,76,46,.6);
+  }
+
+  .role-switch button[aria-pressed="false"]:hover{
+    background:rgba(15,76,46,.08);
+  }
+
+  /* Form */
+  .field{ margin-bottom:16px; }
+  .field[hidden]{ display:none !important; }
+
+  .field label{
+    display:block;
+    font-size:.74rem;
+    font-weight:800;
+    color:var(--label);
+    margin-bottom:7px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+
+  .input-group{
+    position:relative;
+    display:flex;
+    align-items:center;
+    background:#F7F9F8;
+    border:1.5px solid var(--border-soft);
+    border-radius:12px;
+    transition:border-color .28s ease, box-shadow .28s ease, background .28s ease;
+  }
+
+  .input-group:focus-within{
+    border-color:var(--green);
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(15,76,46,.10);
+  }
+
+  .input-group svg.lead-icon{
+    flex:0 0 auto;
+    width:20px;
+    height:20px;
+    margin-left:14px;
+    color:var(--label);
+    transition:color .28s ease;
+  }
+
+  .input-group:focus-within svg.lead-icon{ color:var(--green); }
+
+  .input-group input,
+  .input-group select{
+    flex:1;
+    border:none;
+    outline:none;
+    background:transparent;
+    font-family:inherit;
+    font-size:.96rem;
+    font-weight:600;
+    color:var(--ink);
+    padding:14px 14px 14px 12px;
+    letter-spacing:.02em;
+    min-width:0;
+    appearance:none;
+    -webkit-appearance:none;
+    cursor:text;
+  }
+
+  .input-group select{ cursor:pointer; padding-right:38px; }
+
+  .input-group input::placeholder{ color:#9AA5A0; font-weight:500; }
+
+  #nombre{ text-transform:uppercase; }
+
+  /* Ojo */
+  .toggle-eye{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:42px;
+    height:42px;
+    margin-right:4px;
+    border:none;
+    background:transparent;
+    border-radius:10px;
+    cursor:pointer;
+    color:var(--label);
+    transition:background .22s ease, color .22s ease, transform .22s ease;
+  }
+  .toggle-eye:hover{ background:rgba(15,76,46,.08); color:var(--green); }
+  .toggle-eye:active{ transform:scale(.9); }
+  .toggle-eye svg{ width:20px; height:20px; margin:0; color:inherit; }
+
+  /* Chevron del select */
+  .select-chevron{
+    position:absolute;
+    right:14px;
+    width:16px;
+    height:16px;
+    color:var(--label);
+    pointer-events:none;
+  }
+
+  /* Botón */
+  .btn-ingresar{
+    width:100%;
+    margin-top:10px;
+    padding:16px 20px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green-hover) 100%);
+    color:#FFFFFF;
+    font-family:inherit;
+    font-size:1rem;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:transform .18s ease, box-shadow .28s ease, filter .28s ease;
+    box-shadow:0 12px 22px -12px rgba(15,76,46,.55);
+    border:1px solid rgba(198,163,79,.35);
+  }
+
+  .btn-ingresar:hover{
+    transform:translateY(-2px);
+    box-shadow:0 16px 28px -12px rgba(15,76,46,.65);
+    filter:brightness(1.05);
+  }
+
+  .btn-ingresar:active{
+    transform:translateY(0) scale(.985);
+  }
+
+  .btn-ingresar:disabled{
+    opacity:.65;
+    cursor:not-allowed;
+    transform:none;
+  }
+
+  /* Mensajes */
+  .msg{
+    display:none;
+    margin-top:16px;
+    padding:13px 15px;
+    border-radius:12px;
+    font-size:.86rem;
+    font-weight:600;
+    line-height:1.45;
+    animation:msgIn .4s ease both;
+  }
+  .msg.show{ display:block; }
+  .msg.error{
+    background:var(--error-soft);
+    color:var(--error);
+    border:1.5px solid rgba(198,40,40,.25);
+  }
+  .msg.success{
+    background:var(--green-soft);
+    color:var(--green);
+    border:1.5px solid rgba(15,76,46,.25);
+  }
+
+  @keyframes msgIn{
+    from{opacity:0; transform:translateY(-6px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* Responsive */
+  @media (max-width:480px){
+    body{ padding:18px 12px; }
+    .login-card{ padding:28px 20px 24px; border-radius:16px; }
+    .logo-img{ width:84px; height:84px; }
+    .logo-title{ font-size:1.06rem; }
+    .input-group input,
+    .input-group select{ font-size:16px; /* evita zoom iOS */ }
+    .role-switch button{ font-size:.78rem; padding:10px 6px; }
+  }
+
+  @media (max-width:340px){
+    .login-card{ padding:24px 16px 22px; }
+    .logo-img{ width:76px; height:76px; }
+    .logo-title{ font-size:.98rem; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *, *::before, *::after{
+      animation-duration:.01ms !important;
+      transition-duration:.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<main class="login-card" id="loginCard">
+  <div class="logo-wrap">
+    <img src="so.jpeg" alt="Escudo institucional ESFM Ángel Mendoza Justiniano" class="logo-img" id="logoImg">
+    <h1 class="logo-title">CIENCIAS SOCIALES</h1>
+    <p class="logo-subtitle">ESFM Ángel Mendoza Justiniano</p>
+  </div>
+
+  <!-- Selector de rol -->
+  <div class="role-switch" role="group" aria-label="Seleccione su rol">
+    <button type="button" id="btnRolDocente" aria-pressed="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+      </svg>
+      Docente
+    </button>
+    <button type="button" id="btnRolEstudiante" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      Estudiante
+    </button>
+  </div>
+
+  <form id="loginForm" novalidate autocomplete="off">
+    <!-- Nombre (común para ambos) -->
+    <div class="field">
+      <label for="nombre">Nombre Completo</label>
+      <div class="input-group">
+        <svg class="lead-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <input type="text" id="nombre" name="nombre" placeholder="Escriba su nombre completo" spellcheck="false" required>
+      </div>
+    </div>
+
+    <!-- Carnet (común) -->
+    <div class="field">
+      <label for="carnet">Número de Carnet (C.I.)</label>
+      <div class="input-group">
+        <svg class="lead-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="5" width="20" height="14" rx="2"/>
+          <path d="M2 10h20"/>
+        </svg>
+        <input type="password" id="carnet" name="carnet" placeholder="Solo números" inputmode="numeric" pattern="[0-9]*" required>
+        <button type="button" class="toggle-eye" id="toggleEye" aria-label="Mostrar carnet" aria-pressed="false">
+          <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- País (solo estudiante) -->
+    <div class="field" id="fieldPais" hidden>
+      <label for="pais">País</label>
+      <div class="input-group">
+        <svg class="lead-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <select id="pais" name="pais" aria-required="false">
+          <option value="">— Seleccione su país —</option>
+          <option value="Chile">🇨🇱 Chile</option>
+          <option value="Uruguay">🇺🇾 Uruguay</option>
+          <option value="Costa Rica">🇨🇷 Costa Rica</option>
+          <option value="México">🇲🇽 México</option>
+          <option value="Brasil">🇧🇷 Brasil</option>
+          <option value="Colombia">🇨🇴 Colombia</option>
+          <option value="Perú">🇵🇪 Perú</option>
+        </select>
+        <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-ingresar" id="btnIngresar">Ingresar</button>
+    <div class="msg" id="msg" role="alert" aria-live="polite"></div>
+  </form>
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============================================================
+     DATOS: DOCENTES
+     ============================================================ */
+  const DOCENTES = {
+    "ANDRES JULIO QUISBERT DIAZ":     "73835899",
+    "NAHUEL IGNACIO VELASQUEZ CABEZAS": "14240959"
+  };
+
+  /* ============================================================
+     DATOS: ESTUDIANTES (nombre → { carnet, pais })
+     ============================================================ */
+  const ESTUDIANTES = {
+    "JOSE ALEJANDRO LOPEZ UZEDA":        { carnet:"10533695", pais:"Chile" },
+    "WENDALY CHOQUE FLORES":             { carnet:"7392394",  pais:"Chile" },
+    "ALBERT ALEXANDER GUARACHI RAMIREZ": { carnet:"9069056",  pais:"Chile" },
+    "ARIEL AGUSTIN QUISPE MACHACA":      { carnet:"8595320",  pais:"Chile" },
+    "GUSTAVO DELGADO CONDORI":           { carnet:"9337787",  pais:"Chile" },
+
+    "JOSE LUIS BERNABE CHOQUE":          { carnet:"7338504",  pais:"Uruguay" },
+    "MARIANE JHULIANA ZOLA BELTRAN":     { carnet:"13092761", pais:"Uruguay" },
+    "EYDAN LINO MAMANI LAIME":           { carnet:"7405407",  pais:"Uruguay" },
+    "CRISTOPHER JANCO BUENO":            { carnet:"12466737", pais:"Uruguay" },
+    "BENJAMIN NINA CHOQUECALLATA":       { carnet:"7277707",  pais:"Uruguay" },
+
+    "FABIAN ALEJANDRO VALDA CONDE":      { carnet:"12740583", pais:"Costa Rica" },
+    "FERNANDO AYAVIRI BUENO":            { carnet:"12465108", pais:"Costa Rica" },
+    "CAMILA KENIA ZUÑAGUA ACARAPI":      { carnet:"10918551", pais:"Costa Rica" },
+    "AXEL RODRIGO CHOQUE FLORES":        { carnet:"7452874",  pais:"Costa Rica" },
+    "ARACELY BARRETA CRISPIN":           { carnet:"5064763",  pais:"Costa Rica" },
+
+    "JUAN ALEJANDRO FLORES CHOQUE":      { carnet:"7362068",  pais:"México" },
+    "FABIANA TERESA VARGAS QUISPE":      { carnet:"14899927", pais:"México" },
+    "MICAELA EVELYN ARROYO MOYA":        { carnet:"7335578",  pais:"México" },
+    "WILLIAM ABEL CAYOJA LOPEZ":         { carnet:"7371099",  pais:"México" },
+    "NILA DAIRA POZO MAYTA":             { carnet:"13253647", pais:"México" },
+
+    "JOSE ANGEL MARTINEZ CHALLAPA":      { carnet:"7352591",  pais:"Brasil" },
+    "MIRIAM BARRA SERRANO":              { carnet:"12877635", pais:"Brasil" },
+    "GONZALO BENIGNO CHAVEZ TAPIA":      { carnet:"9413917",  pais:"Brasil" },
+    "RODRIGO PACHECO PEÑAFIEL":          { carnet:"13859394", pais:"Brasil" },
+    "LUIS ALEJANDRO PADILLA MONTAÑO":    { carnet:"14461324", pais:"Brasil" },
+
+    "WARA MADELIN RAMIREZ CHOQUETICLLA": { carnet:"7413133",  pais:"Colombia" },
+    "RENE MAMANI FERNANDEZ":             { carnet:"7403260",  pais:"Colombia" },
+    "ESTEFANY MAYA CHOQUECALLATA CALLE": { carnet:"12997943", pais:"Colombia" },
+    "BELINDA FERNANDEZ COLQUE":          { carnet:"13221244", pais:"Colombia" },
+    "KAREM GABRIELA SALVATIERRA SOLANO": { carnet:"14424504", pais:"Colombia" },
+
+    "NELLY ASTETE CHUNGARA":             { carnet:"7315238",  pais:"Perú" },
+    "EDWIN INGALA VILLCARANI":           { carnet:"13189473", pais:"Perú" },
+    "JESSICA HUANCA MAMANI":             { carnet:"7399468",  pais:"Perú" },
+    "SANTUSA TASTA CAYO":                { carnet:"7307568",  pais:"Perú" },
+    "KEVIN CHURA PEREZ":                 { carnet:"7362286",  pais:"Perú" }
+  };
+
+  /* ============================================================
+     REFERENCIAS
+     ============================================================ */
+  const card      = document.getElementById('loginCard');
+  const form      = document.getElementById('loginForm');
+  const nombre    = document.getElementById('nombre');
+  const carnet    = document.getElementById('carnet');
+  const pais      = document.getElementById('pais');
+  const fieldPais = document.getElementById('fieldPais');
+  const toggleEye = document.getElementById('toggleEye');
+  const eyeIcon   = document.getElementById('eyeIcon');
+  const btn       = document.getElementById('btnIngresar');
+  const msg       = document.getElementById('msg');
+  const logoImg   = document.getElementById('logoImg');
+  const btnDoc    = document.getElementById('btnRolDocente');
+  const btnEst    = document.getElementById('btnRolEstudiante');
+
+  let rolActual = 'docente';
+
+  /* Logo fallback */
+  logoImg.addEventListener('error', function(){ this.style.display = 'none'; });
+
+  /* ============================================================
+     CAMBIO DE ROL
+     ============================================================ */
+  function setRol(rol){
+    rolActual = rol;
+    const esEstudiante = rol === 'estudiante';
+
+    btnDoc.setAttribute('aria-pressed', String(!esEstudiante));
+    btnEst.setAttribute('aria-pressed', String(esEstudiante));
+
+    fieldPais.hidden = !esEstudiante;
+    pais.setAttribute('aria-required', String(esEstudiante));
+
+    // Reset del campo país al cambiar de rol
+    if (!esEstudiante) pais.value = '';
+
+    limpiarMensaje();
+    nombre.focus();
+  }
+
+  btnDoc.addEventListener('click', function(){ setRol('docente'); });
+  btnEst.addEventListener('click', function(){ setRol('estudiante'); });
+
+  /* ============================================================
+     MAYÚSCULAS EN TIEMPO REAL
+     ============================================================ */
+  nombre.addEventListener('input', function(){
+    const start = this.selectionStart;
+    const end   = this.selectionEnd;
+    this.value = this.value.toUpperCase();
+    try{ this.setSelectionRange(start, end); }catch(e){}
+  });
+
+  /* ============================================================
+     SOLO NÚMEROS EN CARNET
+     ============================================================ */
+  carnet.addEventListener('input', function(){
+    const limpio = this.value.replace(/\D/g, '');
+    if (this.value !== limpio) this.value = limpio;
+  });
+
+  carnet.addEventListener('keydown', function(e){
+    const permitidas = ['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Home','End'];
+    if (permitidas.includes(e.key)) return;
+    if (e.key.length === 1 && !/[0-9]/.test(e.key)) e.preventDefault();
+  });
+
+  /* ============================================================
+     MOSTRAR / OCULTAR CARNET
+     ============================================================ */
+  const SVG_EYE_OPEN = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  const SVG_EYE_OFF  = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+
+  toggleEye.addEventListener('click', function(){
+    const visible = carnet.type === 'text';
+    carnet.type = visible ? 'password' : 'text';
+    eyeIcon.innerHTML = visible ? SVG_EYE_OPEN : SVG_EYE_OFF;
+    this.setAttribute('aria-pressed', String(!visible));
+    this.setAttribute('aria-label', visible ? 'Mostrar carnet' : 'Ocultar carnet');
+    carnet.focus();
+  });
+
+  /* ============================================================
+     MENSAJES
+     ============================================================ */
+  function mostrarMensaje(texto, tipo){
+    msg.textContent = texto;
+    msg.className = 'msg ' + tipo + ' show';
+  }
+
+  function limpiarMensaje(){
+    msg.className = 'msg';
+    msg.textContent = '';
+  }
+
+  function vibrar(){
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+  }
+
+  /* ============================================================
+     VALIDACIÓN Y SUBMIT
+     ============================================================ */
+  function validarDocente(nombreLimpio, carnetLimpio){
+    return DOCENTES[nombreLimpio] === carnetLimpio;
+  }
+
+  function validarEstudiante(nombreLimpio, carnetLimpio, paisElegido){
+    const datos = ESTUDIANTES[nombreLimpio];
+    if (!datos) return false;
+    return datos.carnet === carnetLimpio && datos.pais === paisElegido;
+  }
+
+  function redirigir(nombreLimpio){
+    try{
+      localStorage.setItem('usuarioNombre', nombreLimpio);
+      localStorage.setItem('usuarioRol', rolActual);
+      if (rolActual === 'estudiante') {
+        const d = ESTUDIANTES[nombreLimpio];
+        if (d) localStorage.setItem('usuarioPais', d.pais);
+      }
+    }catch(err){ /* almacenamiento no disponible */ }
+
+    setTimeout(function(){
+      window.location.href = 'pisa.html';
+    }, 900);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    limpiarMensaje();
+
+    const nombreLimpio = nombre.value.trim().toUpperCase();
+    const carnetLimpio = carnet.value.trim();
+
+    /* Campos básicos */
+    if (!nombreLimpio || !carnetLimpio){
+      vibrar();
+      mostrarMensaje('Complete todos los campos obligatorios e intente de nuevo.', 'error');
+      return;
+    }
+
+    let valido = false;
+
+    if (rolActual === 'docente'){
+      valido = validarDocente(nombreLimpio, carnetLimpio);
+    } else {
+      const paisElegido = pais.value;
+      if (!paisElegido){
+        vibrar();
+        mostrarMensaje('Seleccione su país antes de continuar.', 'error');
+        return;
+      }
+      valido = validarEstudiante(nombreLimpio, carnetLimpio, paisElegido);
+    }
+
+    if (valido){
+      mostrarMensaje('¡Bienvenido/a, ' + nombreLimpio + '!', 'success');
+      btn.disabled = true;
+      btn.textContent = 'Ingresando…';
+      redirigir(nombreLimpio);
+    } else {
+      vibrar();
+      mostrarMensaje('Pongas bien sus datos. Verifique su nombre completo y número de carnet e intente de nuevo.', 'error');
+      carnet.value = '';
+      carnet.focus();
+    }
+  });
+
+  /* Limpiar error al escribir */
+  nombre.addEventListener('input', limpiarMensaje);
+  carnet.addEventListener('input', limpiarMensaje);
+  pais.addEventListener('change', limpiarMensaje);
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Panel Estadístico PISA 2025 · Resultados Reales y Simulación de Comprensión Lectora en América Latina" />
+  <title>Panel PISA 2025 · Comprensión Lectora</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+
+  <style>
+    /* ============================================================
+       1. SISTEMA DE DISEÑO — Negro · Verde · Blanco · Dorado
+       ============================================================ */
+    :root {
+      --bg-deep:      #0A261A;
+      --bg-deep-2:    #061A11;
+      --card:         #FFFFFF;
+      --green:        #0F4C2E;
+      --green-hover:  #16653E;
+      --green-soft:   #E8F2EC;
+      --green-line:   #B9D4C4;
+      --ink:          #111111;
+      --label:        #4A4A4A;
+      --muted:        #7B8794;
+      --error:        #C62828;
+      --error-soft:   #FDECEC;
+      --border-soft:  #E6E8E7;
+      --gold:         #C6A34F;
+      --gold-light:   #E5C77E;
+      --gold-soft:    #FDF9EB;
+
+      --shadow:       0 24px 60px -18px rgba(0,0,0,.45);
+      --shadow-sm:    0 8px 24px -10px rgba(0,0,0,.3);
+      --radius:       16px;
+      --radius-sm:    10px;
+
+      --sp-1: 8px;
+      --sp-2: 16px;
+      --sp-3: 24px;
+      --sp-4: 32px;
+      --sp-5: 40px;
+      --sp-6: 48px;
+      --sp-8: 64px;
+
+      --font-title: "Playfair Display", Georgia, serif;
+      --font-sans:  "Plus Jakarta Sans", system-ui, sans-serif;
+      --max-width:  1320px;
+    }
+
+    /* ============================================================
+       2. RESET Y BASE
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #0F4C2E 0%, transparent 55%),
+        radial-gradient(900px 500px at 110% 10%, #0B3A24 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-deep-2) 100%);
+      background-attachment: fixed;
+      color: var(--ink);
+      line-height: 1.6;
+      font-size: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+
+    /* ============================================================
+       3. HERO
+       ============================================================ */
+    .hero {
+      position: relative;
+      padding: var(--sp-6) var(--sp-3) var(--sp-4);
+      overflow: hidden;
+    }
+
+    .hero__inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr) minmax(0, 1fr);
+      align-items: center;
+      gap: var(--sp-4);
+    }
+
+    .hero__media {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 3 / 4;
+      box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(198,163,79,0.3);
+      background: #0F4C2E;
+      transform: scale(0.95) rotate(-1deg);
+      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+      z-index: 1;
+    }
+    .hero__media--right { transform: scale(0.95) rotate(1deg); }
+    
+    .hero__media:hover {
+      transform: scale(1) rotate(0deg);
+      box-shadow: 0 40px 80px -20px rgba(0,0,0,0.9), 0 0 0 2px var(--gold);
+      z-index: 2;
+    }
+
+    .hero__media img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      background: #000;
+      display: block;
+      transition: transform 0.7s ease;
+    }
+    .hero__media:hover img { transform: scale(1.05); }
+
+    .hero__media::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(10,38,26,0) 60%, rgba(6,26,17,.85) 100%);
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 0.4s ease;
+    }
+    .hero__media:hover::after { opacity: 0.4; }
+
+    .hero__content {
+      text-align: center;
+      color: #FFFFFF;
+      padding: 0 var(--sp-2);
+    }
+
+    .hero__eyebrow {
+      display: inline-block;
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      background: rgba(15,76,46,0.6);
+      padding: 8px 18px;
+      border-radius: 999px;
+      margin-bottom: var(--sp-2);
+      border: 1px solid rgba(198,163,79,.5);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .hero__title {
+      font-family: var(--font-title);
+      font-size: clamp(1.8rem, 3.5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -.01em;
+      margin-bottom: var(--sp-2);
+      text-shadow: 0 4px 30px rgba(0,0,0,.5);
+    }
+    .hero__title span { 
+      color: var(--gold); 
+      display: block;
+      margin-top: 4px;
+    }
+
+    .hero__subtitle {
+      font-size: clamp(.95rem, 1.4vw, 1.15rem);
+      color: #C9DDD2;
+      max-width: 580px;
+      margin: 0 auto;
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       4. LAYOUT
+       ============================================================ */
+    .layout {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--sp-3) var(--sp-3) var(--sp-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+      flex: 1;
+    }
+
+    /* ============================================================
+       5. SECCIONES Y TARJETAS
+       ============================================================ */
+    .section-head {
+      text-align: center;
+      max-width: 820px;
+      margin: 0 auto var(--sp-4);
+      color: #EAF3EE;
+    }
+
+    .section-head__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--gold-light);
+      background: rgba(198,163,79,.15);
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(198,163,79,.5);
+      margin-bottom: var(--sp-2);
+    }
+
+    .section-head__title {
+      font-family: var(--font-title);
+      font-size: clamp(1.7rem, 3vw, 2.6rem);
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.1;
+      margin-bottom: var(--sp-2);
+    }
+
+    .section-head__sub {
+      font-size: 1rem;
+      color: #B9D4C4;
+      line-height: 1.7;
+    }
+    .section-head__sub strong { color: #FFFFFF; }
+
+    .reales-panel {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: var(--sp-4);
+      align-items: stretch;
+      margin-bottom: var(--sp-5);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow .3s ease, transform .3s ease;
+    }
+    .card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+    .card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-4);
+      padding-bottom: var(--sp-2);
+      border-bottom: 2px solid var(--green-soft);
+    }
+
+    .card__title {
+      font-family: var(--font-title);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+    }
+    .card__title::before {
+      content: "";
+      display: inline-block;
+      width: 4px; height: 22px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
+    .card__hint {
+      font-size: .8rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .chart-wrapper { position: relative; width: 100%; height: 360px; flex: 1; }
+    .tabla-wrapper { overflow-x: auto; border-radius: var(--radius-sm); flex: 1; }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+    table.data-table thead th {
+      text-align: left;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #FFFFFF;
+      background: var(--green);
+      padding: var(--sp-2);
+      border-bottom: 3px solid var(--gold);
+      white-space: nowrap;
+    }
+    table.data-table thead th:first-child { border-top-left-radius: var(--radius-sm); }
+    table.data-table thead th:last-child  { border-top-right-radius: var(--radius-sm); }
+
+    table.data-table tbody td {
+      padding: var(--sp-2) var(--sp-2);
+      border-bottom: 1px solid var(--border-soft);
+      vertical-align: middle;
+    }
+    table.data-table tbody tr:last-child td { border-bottom: none; }
+    table.data-table tbody tr:hover { background: var(--green-soft); }
+
+    .cell-rank {
+      font-weight: 800;
+      color: var(--gold);
+      text-align: center;
+      width: 48px;
+      font-size: 1rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .cell-country { font-weight: 700; color: var(--ink); }
+    .cell-score {
+      font-weight: 800;
+      color: var(--green);
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .trend {
+      font-size: .76rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .trend--down { background: var(--error-soft); color: var(--error); }
+    .trend--up   { background: #E3F5EC; color: #14653F; }
+    .trend--stable { background: #EEF1F5; color: #5B6675; }
+
+    .note {
+      font-size: .85rem;
+      color: var(--label);
+      background: var(--gold-soft);
+      padding: var(--sp-2) var(--sp-3);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-top: var(--sp-3);
+    }
+
+    /* ============================================================
+       6. NIVELES DE DESEMPEÑO
+       ============================================================ */
+    .levels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-5);
+    }
+
+    .level-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(185, 212, 196, 0.2);
+      border-radius: var(--radius);
+      padding: var(--sp-3);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .level-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .level-card__badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: var(--sp-2);
+    }
+    
+    .level-card__title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: var(--sp-1);
+      font-family: var(--font-title);
+    }
+
+    .level-card__desc {
+      font-size: 0.9rem;
+      color: #C9DDD2;
+      line-height: 1.5;
+    }
+
+    .lvl-avanzado .level-card__badge { background: #14653F; color: #E3F5EC; border: 1px solid #2B8A5A; }
+    .lvl-avanzado { border-left: 4px solid #14653F; }
+    
+    .lvl-intermedio .level-card__badge { background: #8A5A00; color: #FDF4D8; border: 1px solid #C6A34F; }
+    .lvl-intermedio { border-left: 4px solid #C6A34F; }
+
+    .lvl-basico .level-card__badge { background: #9B1C1C; color: #FDECEC; border: 1px solid #C62828; }
+    .lvl-basico { border-left: 4px solid #C62828; }
+
+    .lvl-debajo .level-card__badge { background: #4A5568; color: #EEF1F5; border: 1px solid #7B8794; }
+    .lvl-debajo { border-left: 4px solid #7B8794; }
+
+    /* ============================================================
+       7. SIMULACIÓN
+       ============================================================ */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      color: #9CB8A8;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      margin: var(--sp-2) 0 var(--sp-4);
+    }
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(185,212,196,.6), transparent);
+    }
+
+    /* Bloque "Visualizar Notas" */
+    .access-panel {
+      background: var(--card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: var(--sp-4);
+      margin-bottom: var(--sp-5);
+    }
+
+    .access-panel__header {
+      text-align: center;
+      margin-bottom: var(--sp-4);
+    }
+
+    .access-panel__title {
+      font-family: var(--font-title);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--green);
+      margin-bottom: var(--sp-1);
+    }
+
+    .access-panel__sub {
+      font-size: .92rem;
+      color: var(--label);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .access-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      max-width: 380px;
+      margin: 0 auto var(--sp-3);
+      background: var(--green-soft);
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid var(--green-line);
+    }
+
+    .access-toggle button {
+      font-family: inherit;
+      font-size: .85rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: transparent;
+      border: none;
+      padding: 11px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .25s ease, color .25s ease, box-shadow .25s ease;
+    }
+
+    .access-toggle button[aria-pressed="true"] {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 0 6px 16px -8px rgba(15,76,46,.6);
+    }
+
+    .access-toggle button[aria-pressed="false"]:hover {
+      background: rgba(15,76,46,.08);
+    }
+
+    .access-form {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+
+    .access-form .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .access-form label {
+      font-size: .74rem;
+      font-weight: 800;
+      color: var(--label);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .access-form .input-group {
+      display: flex;
+      align-items: center;
+      background: #F7F9F8;
+      border: 1.5px solid var(--border-soft);
+      border-radius: 12px;
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .access-form .input-group:focus-within {
+      border-color: var(--green);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(15,76,46,.10);
+    }
+
+    .access-form .input-group svg {
+      width: 20px; height: 20px;
+      margin-left: 14px;
+      color: var(--label);
+      flex: 0 0 auto;
+    }
+
+    .access-form .input-group input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--ink);
+      padding: 13px 14px 13px 12px;
+      min-width: 0;
+    }
+
+    #accessNombre { text-transform: uppercase; }
+
+    .access-form .toggle-eye {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      margin-right: 4px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--label);
+      transition: background .22s ease, color .22s ease, transform .22s ease;
+      flex: 0 0 auto;
+    }
+    .access-form .toggle-eye:hover {
+      background: rgba(15,76,46,.08);
+      color: var(--green);
+    }
+    .access-form .toggle-eye:active { transform: scale(.9); }
+    .access-form .toggle-eye svg {
+      width: 20px; height: 20px;
+      margin: 0;
+      color: inherit;
+    }
+
+    .access-btn {
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-hover) 100%);
+      border: 1px solid rgba(198,163,79,.5);
+      border-radius: var(--radius-sm);
+      padding: var(--sp-2) var(--sp-4);
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .25s ease;
+      box-shadow: 0 6px 20px -8px rgba(15,76,46,.6);
+      margin-top: var(--sp-1);
+    }
+
+    .access-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -8px rgba(15,76,46,.7);
+      border-color: var(--gold);
+    }
+
+    .access-btn:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .access-msg {
+      display: none;
+      margin-top: var(--sp-2);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: .86rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    .access-msg.show { display: block; }
+    .access-msg.error   { background: var(--error-soft); color: var(--error); border: 1.5px solid rgba(198,40,40,.25); }
+    .access-msg.success { background: var(--green-soft); color: var(--green); border: 1.5px solid rgba(15,76,46,.25); }
+
+    /* Tarjeta personal */
+    .personal-grade-card {
+      margin: 0 auto var(--sp-4);
+      max-width: 520px;
+      background: linear-gradient(135deg, #0F4C2E 0%, #16653E 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: var(--sp-3) var(--sp-4);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(198,163,79,.6);
+      text-align: center;
+      animation: popIn .5s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(12px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .personal-grade-card__label {
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .personal-grade-card__name {
+      font-family: var(--font-title);
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: var(--sp-1);
+    }
+
+    .personal-grade-card__country {
+      font-size: .85rem;
+      color: #C9DDD2;
+      margin-bottom: var(--sp-2);
+    }
+
+    .personal-grade-card__value {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--gold-light);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .personal-grade-card__hint {
+      font-size: .78rem;
+      color: #C9DDD2;
+      margin-top: var(--sp-1);
+    }
+
+    /* La simulación no existe visualmente hasta desbloquear */
+    .simulation-section { display: none; }
+    body.acceso-concedido .simulation-section { display: flex; flex-direction: column; gap: var(--sp-5); }
+
+    .countries-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--sp-4);
+    }
+
+    .country-block {
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: var(--card);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: box-shadow .3s ease;
+    }
+
+    .country-block.highlight {
+      box-shadow: 0 0 0 3px var(--gold), var(--shadow);
+    }
+
+    .country-block__header {
+      background: var(--green);
+      color: #FFFFFF;
+      padding: 12px var(--sp-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-1);
+      border-bottom: 3px solid var(--gold);
+    }
+    .country-block__name {
+      font-size: .95rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .country-block__count {
+      font-size: .72rem;
+      font-weight: 700;
+      color: #C9DDD2;
+      background: rgba(255,255,255,.15);
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+
+    .student-list { list-style: none; flex: 1; }
+
+    .student-item {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+      padding: 10px var(--sp-3);
+      border-bottom: 1px solid var(--border-soft);
+      transition: background .2s ease;
+    }
+    .student-item:last-child { border-bottom: none; }
+    .student-item:nth-child(even) { background: #FAFBFA; }
+    .student-item:hover { background: var(--green-soft); }
+
+    .student-item__number {
+      font-size: .72rem;
+      font-weight: 800;
+      color: var(--muted);
+      min-width: 22px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .student-item__name {
+      flex: 1;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .student-item__input {
+      font-family: inherit;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--green);
+      padding: 6px 8px;
+      border: 1px solid var(--green-line);
+      border-radius: 8px;
+      background: #FFFFFF;
+      width: 76px;
+      text-align: center;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .student-item__input:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(15,76,46,.15);
+    }
+
+    /* Solo docente puede editar */
+    body:not(.modo-docente) .student-item__input {
+      pointer-events: none;
+      background: #F7F9F8;
+      color: #7B8794;
+      border-color: var(--border-soft);
+    }
+    body:not(.modo-docente) .btn-apply {
+      display: none;
+    }
+
+    .student-item.mine {
+      background: var(--gold-soft) !important;
+      box-shadow: inset 4px 0 0 var(--gold);
+    }
+
+    .student-item.mine .student-item__input {
+      color: var(--green);
+      border-color: var(--gold);
+      background: #fff;
+    }
+
+    .apply-section { display: flex; justify-content: center; padding-top: var(--sp-4); }
+
+    .btn-apply {
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-hover) 100%);
+      border: 1px solid rgba(198,163,79,.5);
+      border-radius: var(--radius-sm);
+      padding: var(--sp-2) var(--sp-6);
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .25s ease;
+      box-shadow: 0 6px 20px -8px rgba(15,76,46,.6);
+    }
+    .btn-apply:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -8px rgba(15,76,46,.7);
+      border-color: var(--gold);
+    }
+    .btn-apply:active { transform: translateY(0); }
+
+    /* KPIs */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-4);
+    }
+    
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      padding: var(--sp-3) var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow .25s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .kpi::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 5px;
+      background: var(--gold);
+    }
+    .kpi:hover { box-shadow: var(--shadow); }
+    .kpi__label {
+      font-size: .75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--label);
+    }
+    .kpi__value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--green);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi__meta { font-size: .8rem; color: var(--muted); font-weight: 500; }
+
+    .visual-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: var(--sp-4);
+      align-items: start;
+    }
+    .chart-wrapper--sim { height: 380px; }
+
+    .badge {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .badge--none { background: #EEF1F5; color: #5B6675; border-color: #D8DEE6; }
+    .badge--bad  { background: var(--error-soft); color: var(--error); border-color: #F5C2C2; }
+    .badge--mid  { background: var(--gold-soft); color: #8A5A00; border-color: #F0DFA8; }
+    .badge--good { background: #E3F5EC; color: #14653F; border-color: #B9E3CD; }
+
+    /* ============================================================
+       8. RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1024px) {
+      .hero__inner { 
+        grid-template-columns: 1fr; 
+        gap: var(--sp-4);
+        padding-top: var(--sp-4);
+      }
+      .hero__inner {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "content content"
+          "left    right";
+        align-items: start;
+        justify-items: center;
+      }
+      .hero__content { grid-area: content; }
+      .hero__media--left  { grid-area: left;  }
+      .hero__media--right { grid-area: right; }
+
+      .hero__media { 
+        max-width: 220px; 
+        width: 100%;
+        margin: 0 auto; 
+        aspect-ratio: 3/4;
+        transform: none;
+      }
+      .hero__media--right { transform: none; }
+      .hero__media:hover { transform: scale(1.02); }
+      
+      .reales-panel { grid-template-columns: 1fr; gap: var(--sp-3); }
+      .visual-grid { grid-template-columns: 1fr; gap: var(--sp-3); }
+      .chart-wrapper--sim { height: 340px; }
+      .chart-wrapper { height: 300px; }
+    }
+
+    @media (max-width: 780px) {
+      .layout { padding: var(--sp-2) var(--sp-2) var(--sp-4); gap: var(--sp-4); }
+      .kpi-grid { grid-template-columns: 1fr; gap: var(--sp-2); }
+      .countries-grid { grid-template-columns: 1fr; gap: var(--sp-3); }
+      .chart-wrapper { height: 260px; }
+      .chart-wrapper--sim { height: 280px; }
+      .card { padding: var(--sp-3); }
+      .btn-apply { width: 100%; padding: var(--sp-2) var(--sp-3); }
+      
+      .hero__inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "content content"
+          "left    right";
+        gap: var(--sp-2);
+      }
+      .hero__content { grid-area: content; order: 0; margin-bottom: 0; }
+      .hero__media--left  { grid-area: left; }
+      .hero__media--right { grid-area: right; }
+
+      .hero__media {
+        max-width: 100%;
+        aspect-ratio: 3/4;
+        transform: none;
+      }
+      .hero__media--right { transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="hero" role="banner">
+    <div class="hero__inner">
+      <figure class="hero__media hero__media--left">
+        <img src="amj.jpg" alt="Escudo institucional Ángel Mendoza Justiniano"
+             onerror="this.style.display='none';this.parentNode.style.background='linear-gradient(135deg,#0F4C2E,#0A261A)';" />
+      </figure>
+
+      <div class="hero__content">
+        <span class="hero__eyebrow">Evaluación Internacional · OCDE</span>
+        <h1 class="hero__title">COMPRENSIÓN LECTORA<br><span>PISA 2025 · AMÉRICA LATINA</span></h1>
+        <p class="hero__subtitle">Resultados oficiales y panel estadístico de simulación con los 7 mejores países de la región.</p>
+      </div>
+
+      <figure class="hero__media hero__media--right">
+        <img src="so.jpeg" alt="Escudo institucional Ciencias Sociales"
+             onerror="this.style.display='none';this.parentNode.style.background='linear-gradient(135deg,#0A261A,#0F4C2E)';" />
+      </figure>
+    </div>
+  </header>
+
+  <main class="layout" role="main">
+
+    <section aria-labelledby="reales-title">
+      <div class="section-head">
+        <span class="section-head__badge">📊 Datos Oficiales y Reales</span>
+        <h2 class="section-head__title" id="reales-title">Resultados Reales de la Prueba PISA 2025</h2>
+        <p class="section-head__sub">
+          Los 7 mejores países de América Latina en comprensión lectora, ordenados de mayor a menor.
+          Ninguno superó el promedio OCDE de <strong>461 puntos</strong>; Chile lidera con <strong>436</strong>.
+        </p>
+      </div>
+
+      <div class="reales-panel">
+        <article class="card">
+          <div class="card__header">
+            <h3 class="card__title">Puntaje Real en Lectura (PISA 2025)</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-real" role="img" aria-label="Gráfico de barras con los puntajes reales de PISA 2025"></canvas>
+          </div>
+          <div class="note">
+            🇲🇽 México y 🇧🇷 Brasil empatan en el 4.º puesto con <strong>408 pts</strong>. Chile lidera con <strong>436 pts</strong>, a 25 del promedio OCDE.
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__header">
+            <h3 class="card__title">Tabla Comparativa Oficial</h3>
+          </div>
+          <div class="tabla-wrapper">
+            <table class="data-table">
+              <caption class="visually-hidden">Resultados oficiales PISA 2025</caption>
+              <thead>
+                <tr>
+                  <th scope="col" style="text-align:center;">Puesto</th>
+                  <th scope="col">País</th>
+                  <th scope="col" style="text-align:right;">Puntaje</th>
+                  <th scope="col">vs. OCDE (461)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="cell-rank">1°</td><td class="cell-country">🇨🇱 Chile</td><td class="cell-score">436</td><td><span class="trend trend--down">▼ −25 pts</span></td></tr>
+                <tr><td class="cell-rank">2°</td><td class="cell-country">🇺🇾 Uruguay</td><td class="cell-score">423</td><td><span class="trend trend--down">▼ −38 pts</span></td></tr>
+                <tr><td class="cell-rank">3°</td><td class="cell-country">🇨🇷 Costa Rica</td><td class="cell-score">416</td><td><span class="trend trend--down">▼ −45 pts</span></td></tr>
+                <tr><td class="cell-rank">4°</td><td class="cell-country">🇲🇽 México</td><td class="cell-score">408</td><td><span class="trend trend--down">▼ −53 pts</span></td></tr>
+                <tr><td class="cell-rank">4°</td><td class="cell-country">🇧🇷 Brasil</td><td class="cell-score">408</td><td><span class="trend trend--down">▼ −53 pts</span></td></tr>
+                <tr><td class="cell-rank">6°</td><td class="cell-country">🇨🇴 Colombia</td><td class="cell-score">399</td><td><span class="trend trend--down">▼ −62 pts</span></td></tr>
+                <tr><td class="cell-rank">7°</td><td class="cell-country">🇵🇪 Perú</td><td class="cell-score">390</td><td><span class="trend trend--down">▼ −71 pts</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+
+      <div class="levels-grid">
+        <article class="level-card lvl-avanzado">
+          <span class="level-card__badge">Nivel Avanzado</span>
+          <h3 class="level-card__title">450 – 500 pts</h3>
+          <p class="level-card__desc">Evalúa información crítica, detecta sesgos y contrasta fuentes complejas.</p>
+        </article>
+        
+        <article class="level-card lvl-intermedio">
+          <span class="level-card__badge">Nivel Intermedio</span>
+          <h3 class="level-card__title">350 – 449 pts</h3>
+          <p class="level-card__desc">Comprende la idea principal, deduce causas y relaciona datos de gráficos.</p>
+        </article>
+
+        <article class="level-card lvl-basico">
+          <span class="level-card__badge">Nivel Básico / Mínimo</span>
+          <h3 class="level-card__title">250 – 349 pts</h3>
+          <p class="level-card__desc">Localiza información explícita y sencilla en un texto corto.</p>
+        </article>
+
+        <article class="level-card lvl-debajo">
+          <span class="level-card__badge">Debajo del Nivel Mínimo</span>
+          <h3 class="level-card__title">0 – 249 pts</h3>
+          <p class="level-card__desc">Tiene dificultades para extraer ideas básicas de lectura.</p>
+        </article>
+      </div>
+
+      <div class="divider">A continuación · Visualización y Simulación Estadística</div>
+    </section>
+
+    <section class="access-panel" aria-labelledby="access-title">
+      <div class="access-panel__header">
+        <h2 class="access-panel__title" id="access-title">🔎 Visualizar Notas</h2>
+        <p class="access-panel__sub">
+          Accede como docente para ver y editar todos los puntajes, o como estudiante para consultar tu nota y el panel estadístico.
+        </p>
+      </div>
+
+      <div class="access-toggle" role="group" aria-label="Seleccione su rol">
+        <button type="button" id="btnRolDocente" aria-pressed="true">Docente</button>
+        <button type="button" id="btnRolEstudiante" aria-pressed="false">Estudiante</button>
+      </div>
+
+      <form class="access-form" id="accessForm" novalidate autocomplete="off">
+        <div class="field">
+          <label for="accessNombre">Nombre Completo</label>
+          <div class="input-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input type="text" id="accessNombre" name="accessNombre" placeholder="Escriba su nombre completo" spellcheck="false" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="accessCarnet">Número de Carnet (C.I.)</label>
+          <div class="input-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <path d="M2 10h20"/>
+            </svg>
+            <input type="password" id="accessCarnet" name="accessCarnet" placeholder="Solo números" inputmode="numeric" pattern="[0-9]*" required>
+            <button type="button" class="toggle-eye" id="accessToggleEye" aria-label="Mostrar carnet" aria-pressed="false">
+              <svg id="accessEyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="access-btn" id="accessBtn">Saber mi nota</button>
+
+        <div class="access-msg" id="accessMsg" role="alert" aria-live="polite"></div>
+      </form>
+
+      <div id="personalGrade" hidden>
+        <div class="personal-grade-card">
+          <div class="personal-grade-card__label">Tu resultado PISA 2025</div>
+          <div class="personal-grade-card__name" id="pgNombre">—</div>
+          <div class="personal-grade-card__country" id="pgPais">—</div>
+          <div class="personal-grade-card__value" id="pgNota">—</div>
+          <div class="personal-grade-card__hint">Puntaje registrado en la simulación</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="simulation-section">
+
+      <section class="card" aria-labelledby="students-title">
+        <div class="card__header">
+          <h2 class="card__title" id="students-title">Registro de Puntajes por País (Simulación)</h2>
+          <span class="card__hint">Solo lectura hasta autenticarse</span>
+        </div>
+
+        <div class="countries-grid" id="countries-grid"></div>
+
+        <div class="apply-section">
+          <button type="button" class="btn-apply" id="apply-btn">Aplicar Puntajes y Actualizar Panel</button>
+        </div>
+      </section>
+
+      <div class="stats-section">
+
+        <section class="kpi-grid" aria-label="Resumen global de la muestra">
+          <article class="kpi">
+            <span class="kpi__label">Total Alumnos Evaluados</span>
+            <span class="kpi__value" id="kpi-total">0</span>
+            <span class="kpi__meta">Muestra registrada</span>
+          </article>
+          <article class="kpi">
+            <span class="kpi__label">Promedio Global Simulado</span>
+            <span class="kpi__value" id="kpi-average">0</span>
+            <span class="kpi__meta">Puntaje medio de los países</span>
+          </article>
+          <article class="kpi">
+            <span class="kpi__label">País Líder (Simulación)</span>
+            <span class="kpi__value" id="kpi-leader">—</span>
+            <span class="kpi__meta">Mayor puntaje promedio</span>
+          </article>
+        </section>
+
+        <section class="visual-grid" aria-label="Panel visual de resultados simulados">
+
+          <article class="card" aria-labelledby="chart-title">
+            <div class="card__header">
+              <h2 class="card__title" id="chart-title">Puntaje Promedio por País</h2>
+              <span class="card__hint">Escala 0 – 500</span>
+            </div>
+            <div class="chart-wrapper chart-wrapper--sim">
+              <canvas id="bar-chart" role="img" aria-label="Gráfico de barras de simulación"></canvas>
+            </div>
+          </article>
+
+          <article class="card" aria-labelledby="table-title">
+            <div class="card__header">
+              <h2 class="card__title" id="table-title">Tabla de Posiciones</h2>
+              <span class="card__hint">Orden: mayor a menor</span>
+            </div>
+            <div class="tabla-wrapper">
+              <table class="data-table">
+                <caption class="visually-hidden">Posiciones y rendimiento simulado</caption>
+                <thead>
+                  <tr>
+                    <th scope="col" style="text-align:center;">#</th>
+                    <th scope="col">País</th>
+                    <th scope="col" style="text-align:right;">Promedio</th>
+                    <th scope="col">Rendimiento</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+          </article>
+
+        </section>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    const REAL_DATA = [
+      { country: "Chile",      score: 436, diff: -25 },
+      { country: "Uruguay",    score: 423, diff: -38 },
+      { country: "Costa Rica", score: 416, diff: -45 },
+      { country: "México",     score: 408, diff: -53 },
+      { country: "Brasil",     score: 408, diff: -53 },
+      { country: "Colombia",   score: 399, diff: -62 },
+      { country: "Perú",       score: 390, diff: -71 }
+    ];
+
+    const COUNTRIES = [
+      { name: "Chile",      students: [
+        { name: "JOSE ALEJANDRO LOPEZ UZEDA", carnet: "10533695" },
+        { name: "WENDALY CHOQUE FLORES", carnet: "7392394" },
+        { name: "ALBERT ALEXANDER GUARACHI RAMIREZ", carnet: "9069056" },
+        { name: "ARIEL AGUSTIN QUISPE MACHACA", carnet: "8595320" },
+        { name: "GUSTAVO DELGADO CONDORI", carnet: "9337787" }
+      ]},
+      { name: "Uruguay",    students: [
+        { name: "JOSE LUIS BERNABE CHOQUE", carnet: "7338504" },
+        { name: "MARIANE JHULIANA ZOLA BELTRAN", carnet: "13092761" },
+        { name: "EYDAN LINO MAMANI LAIME", carnet: "7405407" },
+        { name: "CRISTOPHER JANCO BUENO", carnet: "12466737" },
+        { name: "BENJAMIN NINA CHOQUECALLATA", carnet: "7277707" }
+      ]},
+      { name: "Costa Rica", students: [
+        { name: "FABIAN ALEJANDRO VALDA CONDE", carnet: "12740583" },
+        { name: "FERNANDO AYAVIRI BUENO", carnet: "12465108" },
+        { name: "CAMILA KENIA ZUÑAGUA ACARAPI", carnet: "10918551" },
+        { name: "AXEL RODRIGO CHOQUE FLORES", carnet: "7452874" },
+        { name: "ARACELY BARRETA CRISPIN", carnet: "5064763" }
+      ]},
+      { name: "México",     students: [
+        { name: "JUAN ALEJANDRO FLORES CHOQUE", carnet: "7362068" },
+        { name: "FABIANA TERESA VARGAS QUISPE", carnet: "14899927" },
+        { name: "MICAELA EVELYN ARROYO MOYA", carnet: "7335578" },
+        { name: "WILLIAM ABEL CAYOJA LOPEZ", carnet: "7371099" },
+        { name: "NILA DAIRA POZO MAYTA", carnet: "13253647" }
+      ]},
+      { name: "Brasil",     students: [
+        { name: "JOSE ANGEL MARTINEZ CHALLAPA", carnet: "7352591" },
+        { name: "MIRIAM BARRA SERRANO", carnet: "12877635" },
+        { name: "GONZALO BENIGNO CHAVEZ TAPIA", carnet: "9413917" },
+        { name: "RODRIGO PACHECO PEÑAFIEL", carnet: "13859394" },
+        { name: "LUIS ALEJANDRO PADILLA MONTAÑO", carnet: "14461324" }
+      ]},
+      { name: "Colombia",   students: [
+        { name: "WARA MADELIN RAMIREZ CHOQUETICLLA", carnet: "7413133" },
+        { name: "RENE MAMANI FERNANDEZ", carnet: "7403260" },
+        { name: "ESTEFANY MAYA CHOQUECALLATA CALLE", carnet: "12997943" },
+        { name: "BELINDA FERNANDEZ COLQUE", carnet: "13221244" },
+        { name: "KAREM GABRIELA SALVATIERRA SOLANO", carnet: "14424504" }
+      ]},
+      { name: "Perú",       students: [
+        { name: "NELLY ASTETE CHUNGARA", carnet: "7315238" },
+        { name: "EDWIN INGALA VILLCARANI", carnet: "13189473" },
+        { name: "JESSICA HUANCA MAMANI", carnet: "7399468" },
+        { name: "SANTUSA TASTA CAYO", carnet: "7307568" },
+        { name: "KEVIN CHURA PEREZ", carnet: "7362286" }
+      ]}
+    ];
+
+    const DOCENTES = {
+      "ANDRES JULIO QUISBERT DIAZ": "73835899",
+      "NAHUEL IGNACIO VELASQUEZ CABEZAS": "14240959"
+    };
+
+    const NOTAS_BASE = (() => {
+      const map = {};
+      let valor = 500;
+      COUNTRIES.forEach((country) => {
+        country.students.forEach((student) => {
+          map[student.name] = valor;
+          valor -= 1;
+        });
+      });
+      return map;
+    })();
+
+    const MIN_PUNTAJE = 0;
+    const MAX_PUNTAJE = 500;
+
+    const state = {
+      results: [],
+      totalStudents: 0,
+      globalAverage: 0,
+      leader: "—",
+      rolAcceso: "docente",
+      desbloqueado: false,
+      modo: "bloqueado", 
+      estudianteActual: null
+    };
+
+    const GREEN = "#0F4C2E";
+    const GOLD = "#C6A34F";
+    const GOLD_DARK = "#A88534";
+
+    function initRealChart() {
+      const ctx = document.getElementById("chart-real").getContext("2d");
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, GREEN);
+      gradient.addColorStop(1, "#0A261A");
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: REAL_DATA.map(d => d.country),
+          datasets: [{
+            label: "Puntaje Real PISA 2025",
+            data: REAL_DATA.map(d => d.score),
+            backgroundColor: gradient,
+            hoverBackgroundColor: GOLD,
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.65
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "#0A261A",
+              titleColor: GOLD,
+              bodyColor: "#FFFFFF",
+              padding: 12,
+              cornerRadius: 8,
+              displayColors: false,
+              callbacks: { label: (c) => ` ${c.parsed.y} puntos` }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: "#4A4A4A", font: { size: 12, weight: "700" } } },
+            y: { beginAtZero: true, max: 500, ticks: { color: "#7B8794", stepSize: 100, font: { size: 11 } }, grid: { color: "#E6E8E7" } }
+          }
+        }
+      });
+    }
+
+    function getPerformance(score) {
+      if (score === 0) return { label: "Sin Datos (En espera)", variant: "none" };
+      if (score <= 249) return { label: "Debajo del Mínimo", variant: "bad" };
+      if (score <= 349) return { label: "Básico / Mínimo", variant: "mid" };
+      if (score <= 449) return { label: "Intermedio", variant: "good" };
+      return { label: "Avanzado", variant: "good" };
+    }
+
+    function applyBadgeVariant(el, variant) {
+      el.classList.remove("badge--none", "badge--bad", "badge--mid", "badge--good");
+      el.classList.add(`badge--${variant}`);
+    }
+
+    function formatNumber(n) {
+      return new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 }).format(n);
+    }
+
+    function renderCountries() {
+      const grid = document.getElementById("countries-grid");
+      grid.innerHTML = "";
+      const fragment = document.createDocumentFragment();
+
+      COUNTRIES.forEach((country) => {
+        const block = document.createElement("article");
+        block.className = "country-block";
+        block.dataset.country = country.name;
+
+        const header = document.createElement("header");
+        header.className = "country-block__header";
+
+        const nameEl = document.createElement("span");
+        nameEl.className = "country-block__name";
+        nameEl.textContent = country.name;
+
+        const countEl = document.createElement("span");
+        countEl.className = "country-block__count";
+        countEl.textContent = `${country.students.length} est.`;
+
+        header.appendChild(nameEl);
+        header.appendChild(countEl);
+
+        const list = document.createElement("ul");
+        list.className = "student-list";
+
+        country.students.forEach((student, studentIndex) => {
+          const item = document.createElement("li");
+          item.className = "student-item";
+          item.dataset.studentName = student.name;
+
+          const num = document.createElement("span");
+          num.className = "student-item__number";
+          num.textContent = studentIndex + 1;
+
+          const name = document.createElement("span");
+          name.className = "student-item__name";
+          name.textContent = student.name;
+
+          const input = document.createElement("input");
+          input.type = "number";
+          input.className = "student-item__input";
+          input.min = MIN_PUNTAJE;
+          input.max = MAX_PUNTAJE;
+          input.placeholder = "—";
+          input.setAttribute("aria-label", `Puntaje de ${student.name} en ${country.name}`);
+          input.dataset.country = country.name;
+          input.dataset.studentName = student.name;
+
+          input.addEventListener("input", () => {
+            let val = Number(input.value);
+            if (Number.isNaN(val)) return;
+            if (val < MIN_PUNTAJE) input.value = MIN_PUNTAJE;
+            if (val > MAX_PUNTAJE) input.value = MAX_PUNTAJE;
+          });
+
+          item.appendChild(num);
+          item.appendChild(name);
+          item.appendChild(input);
+          list.appendChild(item);
+        });
+
+        block.appendChild(header);
+        block.appendChild(list);
+        fragment.appendChild(block);
+      });
+
+      grid.appendChild(fragment);
+    }
+
+    function rellenarNotas() {
+      document.querySelectorAll(".student-item__input").forEach((inp) => {
+        const nombre = inp.dataset.studentName;
+        if (state.modo === "docente") {
+          inp.value = NOTAS_BASE[nombre] ?? "";
+        } else if (state.modo === "estudiante" && state.estudianteActual) {
+          inp.value = (nombre === state.estudianteActual.name) ? (NOTAS_BASE[nombre] ?? "") : "";
+        } else {
+          inp.value = "";
+        }
+      });
+    }
+
+    // Modificada para aceptar un objeto de notas si estamos en modo estudiante
+    function computeResults(notasOverride = null) {
+      const results = [];
+      let totalSum = 0;
+      let totalCount = 0;
+
+      COUNTRIES.forEach((country) => {
+        const inputs = document.querySelectorAll(`.student-item__input[data-country="${country.name}"]`);
+        let sum = 0;
+        let count = 0;
+
+        inputs.forEach((input) => {
+          // Si hay override (modo estudiante), usa el valor del objeto; si no, usa el valor del input
+          const val = notasOverride 
+            ? Number(notasOverride[input.dataset.studentName] || 0) 
+            : Number(input.value);
+            
+          if (val > 0) {
+            sum += val;
+            count++;
+          }
+        });
+
+        const average = count > 0 ? Math.round((sum / count) * 10) / 10 : 0;
+        results.push({ country: country.name, average });
+        totalSum += sum;
+        totalCount += count;
+      });
+
+      results.sort((a, b) => b.average - a.average);
+
+      state.results = results;
+      state.totalStudents = totalCount;
+      state.globalAverage = totalCount > 0 ? Math.round((totalSum / totalCount) * 10) / 10 : 0;
+      state.leader = results.find((r) => r.average > 0)?.country || "—";
+    }
+
+    function updateKPIs() {
+      document.getElementById("kpi-total").textContent = formatNumber(state.totalStudents);
+      document.getElementById("kpi-average").textContent = formatNumber(state.globalAverage);
+      document.getElementById("kpi-leader").textContent = state.leader;
+    }
+
+    function updateTable() {
+      const tbody = document.getElementById("table-body");
+      tbody.innerHTML = "";
+      const fragment = document.createDocumentFragment();
+
+      state.results.forEach((result, index) => {
+        const tr = document.createElement("tr");
+
+        const tdRank = document.createElement("td");
+        tdRank.className = "cell-rank";
+        tdRank.textContent = index + 1;
+
+        const tdCountry = document.createElement("td");
+        tdCountry.className = "cell-country";
+        tdCountry.textContent = result.country;
+
+        const tdScore = document.createElement("td");
+        tdScore.className = "cell-score";
+        tdScore.textContent = formatNumber(result.average);
+
+        const tdBadge = document.createElement("td");
+        const badge = document.createElement("span");
+        const perf = getPerformance(result.average);
+        badge.className = "badge";
+        applyBadgeVariant(badge, perf.variant);
+        badge.textContent = perf.label;
+        tdBadge.appendChild(badge);
+
+        tr.appendChild(tdRank);
+        tr.appendChild(tdCountry);
+        tr.appendChild(tdScore);
+        tr.appendChild(tdBadge);
+        fragment.appendChild(tr);
+      });
+
+      tbody.appendChild(fragment);
+    }
+
+    let chartInstance = null;
+
+    function initChart() {
+      const ctx = document.getElementById("bar-chart").getContext("2d");
+      chartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: COUNTRIES.map((c) => c.name),
+          datasets: [{
+            label: "Promedio Simulado",
+            data: COUNTRIES.map(() => 0),
+            backgroundColor: GOLD,
+            hoverBackgroundColor: GOLD_DARK,
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.62
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 700, easing: "easeOutQuart" },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: GREEN,
+              titleColor: "#FFFFFF",
+              bodyColor: "#E8F2EC",
+              padding: 10,
+              cornerRadius: 6,
+              displayColors: false,
+              callbacks: { label: (c) => ` ${c.parsed.y} pts` }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: "#4A4A4A", font: { size: 12, weight: "600" } } },
+            y: { beginAtZero: true, max: MAX_PUNTAJE, ticks: { color: "#7B8794", font: { size: 11 }, stepSize: 100 }, grid: { color: "#E6E8E7" } }
+          }
+        }
+      });
+    }
+
+    function updateChart() {
+      if (!chartInstance) return;
+      chartInstance.data.datasets[0].data = COUNTRIES.map((c) => {
+        const r = state.results.find((res) => res.country === c.name);
+        return r ? r.average : 0;
+      });
+      chartInstance.update();
+    }
+
+    function applyGrades() {
+      if (state.modo !== "docente") return;
+      computeResults();
+      updateKPIs();
+      updateTable();
+      updateChart();
+    }
+
+    /* ===== BLOQUE VISUALIZAR NOTAS ===== */
+    const accessForm    = document.getElementById("accessForm");
+    const accessNombre  = document.getElementById("accessNombre");
+    const accessCarnet  = document.getElementById("accessCarnet");
+    const accessBtn     = document.getElementById("accessBtn");
+    const accessMsg     = document.getElementById("accessMsg");
+    const btnRolDoc     = document.getElementById("btnRolDocente");
+    const btnRolEst     = document.getElementById("btnRolEstudiante");
+    const personalGrade = document.getElementById("personalGrade");
+    const pgNombre      = document.getElementById("pgNombre");
+    const pgPais        = document.getElementById("pgPais");
+    const pgNota        = document.getElementById("pgNota");
+    const accessToggleEye = document.getElementById("accessToggleEye");
+    const accessEyeIcon   = document.getElementById("accessEyeIcon");
+
+    const SVG_EYE_OPEN = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    const SVG_EYE_OFF  = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+
+    accessToggleEye.addEventListener("click", function () {
+      const visible = accessCarnet.type === "text";
+      accessCarnet.type = visible ? "password" : "text";
+      accessEyeIcon.innerHTML = visible ? SVG_EYE_OPEN : SVG_EYE_OFF;
+      this.setAttribute("aria-pressed", String(!visible));
+      this.setAttribute("aria-label", visible ? "Mostrar carnet" : "Ocultar carnet");
+      accessCarnet.focus();
+    });
+
+    function setRolAcceso(rol) {
+      state.rolAcceso = rol;
+      const esDoc = rol === "docente";
+      btnRolDoc.setAttribute("aria-pressed", String(esDoc));
+      btnRolEst.setAttribute("aria-pressed", String(!esDoc));
+      accessBtn.textContent = esDoc ? "Ver notas" : "Saber mi nota";
+      limpiarMensajeAcceso();
+      personalGrade.hidden = true;
+    }
+
+    btnRolDoc.addEventListener("click", () => setRolAcceso("docente"));
+    btnRolEst.addEventListener("click", () => setRolAcceso("estudiante"));
+
+    function mostrarMensajeAcceso(texto, tipo) {
+      accessMsg.textContent = texto;
+      accessMsg.className = `access-msg show ${tipo}`;
+    }
+    function limpiarMensajeAcceso() {
+      accessMsg.textContent = "";
+      accessMsg.className = "access-msg";
+    }
+
+    accessNombre.addEventListener("input", function () {
+      const start = this.selectionStart, end = this.selectionEnd;
+      this.value = this.value.toUpperCase();
+      try { this.setSelectionRange(start, end); } catch (e) {}
+      limpiarMensajeAcceso();
+    });
+
+    accessCarnet.addEventListener("input", function () {
+      const limpio = this.value.replace(/\D/g, "");
+      if (this.value !== limpio) this.value = limpio;
+      limpiarMensajeAcceso();
+    });
+
+    function autenticarEstudiante(nombre, carnet) {
+      for (const country of COUNTRIES) {
+        const found = country.students.find(
+          (s) => s.name === nombre && s.carnet === carnet
+        );
+        if (found) return { ...found, pais: country.name };
+      }
+      return null;
+    }
+
+    function concederAccesoDocente() {
+      state.modo = "docente";
+      state.desbloqueado = true;
+      state.estudianteActual = null;
+      document.body.classList.add("acceso-concedido", "modo-docente");
+      renderCountries();
+      rellenarNotas();
+      computeResults();
+      updateKPIs();
+      updateTable();
+      updateChart();
+      document.querySelector(".simulation-section").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function concederAccesoEstudiante(est) {
+      state.modo = "estudiante";
+      state.desbloqueado = false;
+      state.estudianteActual = est;
+      document.body.classList.add("acceso-concedido");
+      document.body.classList.remove("modo-docente");
+      
+      // 1. Renderizar la interfaz
+      renderCountries();
+      
+      // 2. Rellenar SOLO el input del estudiante actual, los demás quedan vacíos
+      document.querySelectorAll(".student-item__input").forEach((inp) => {
+        if (inp.dataset.studentName === est.name) {
+          inp.value = NOTAS_BASE[est.name] ?? "";
+        } else {
+          inp.value = ""; // VACÍO ABSOLUTO, sin valores ocultos
+        }
+        inp.setAttribute("readonly", "readonly");
+      });
+      
+      // 3. Calcular el panel estadístico pasando el objeto de notas en memoria
+      //    (esto evita tener que inyectar valores en los inputs del DOM)
+      computeResults(NOTAS_BASE);
+      updateKPIs();
+      updateTable();
+      updateChart();
+
+      // 4. Llenar tarjeta personal y resaltar al estudiante
+      pgNombre.textContent = est.name;
+      pgPais.textContent   = est.pais;
+      pgNota.textContent   = NOTAS_BASE[est.name] ?? 0;
+      personalGrade.hidden = false;
+
+      const block = document.querySelector(`.country-block[data-country="${est.pais}"]`);
+      if (block) block.classList.add("highlight");
+      
+      const item = document.querySelector(`.student-item[data-student-name="${est.name}"]`);
+      if (item) item.classList.add("mine");
+      
+      // Ocultar botón de aplicar
+      document.getElementById("apply-btn").style.display = "none";
+      
+      // Desplazamiento automático
+      setTimeout(() => {
+        if (block) block.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
+    }
+
+    accessForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      limpiarMensajeAcceso();
+      personalGrade.hidden = true;
+
+      const nombre = accessNombre.value.trim().toUpperCase();
+      const carnet = accessCarnet.value.trim();
+
+      if (!nombre || !carnet) {
+        mostrarMensajeAcceso("Complete todos los campos e intente de nuevo.", "error");
+        return;
+      }
+
+      if (state.rolAcceso === "docente") {
+        if (DOCENTES[nombre] === carnet) {
+          concederAccesoDocente();
+          mostrarMensajeAcceso(`¡Bienvenido/a, docente ${nombre}! Ya puede ver y editar todas las notas.`, "success");
+        } else {
+          mostrarMensajeAcceso("Datos incorrectos. Verifique su nombre y carnet.", "error");
+          accessCarnet.value = "";
+          accessCarnet.focus();
+        }
+      } else {
+        const est = autenticarEstudiante(nombre, carnet);
+        if (est) {
+          concederAccesoEstudiante(est);
+          mostrarMensajeAcceso("Nota encontrada. Panel estadístico desbloqueado.", "success");
+        } else {
+          mostrarMensajeAcceso("Datos incorrectos. Verifique su nombre y carnet.", "error");
+          accessCarnet.value = "";
+          accessCarnet.focus();
+        }
+      }
+    });
+
+    function init() {
+      initRealChart();
+      initChart();
+      setRolAcceso("docente");
+      document.getElementById("apply-btn").addEventListener("click", applyGrades);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      window.addEventListener("load", init);
+    }
+  </script>
+
+</body>
+</html>
